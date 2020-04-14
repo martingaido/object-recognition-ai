@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Recognition</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.1"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"> </script>
+
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="canvas" width="300" height="300" style="display: none;"></canvas>
+
+    <div id="status"></div>
+
+    <style>
+        video {
+            margin: 0px 0px 0px 0px;
+            width: 300px;
+            height: 300px;
+            position: absolute;
+        }
+
+        #status {
+            background-color: aquamarine;
+            position: absolute;
+            padding: 10px 10px 10px 10px;
+        }
+    </style>
+
+    <script>
+
+        (async () => {
+
+            const model = await mobilenet.load();
+
+            const status  = document.getElementById('status');
+            const video   = document.getElementById('video');
+            const canvas  = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: {
+                    facingMode: 'environment'
+                }
+            });
+
+            video.srcObject = stream;
+
+            predict();
+
+            async function predict() {
+
+                context.drawImage(video, 0, 0, window.innerWidth, window.innerHeight);
+                
+                const predictions = await model.classify(canvas);
+                
+                status.innerHTML = `<strong>Object:</strong> ${predictions[0].className} -- ${predictions[0].probability}`;
+                
+                requestAnimationFrame(predict);
+            }
+
+        })();
+
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>

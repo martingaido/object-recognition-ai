@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Recognition</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.1"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"> </script>
+
+    <!-- Replace this with your image. Make sure CORS settings allow reading the image! -->
+    <img id="img" src="cat.jpg"></img>
+
+    <div id="status"></div>
+
+    <style>
+        #status {
+            background-color: aquamarine;
+            position: absolute;
+            padding: 10px 10px 10px 10px;
+        }
+    </style>
+
+    <script>
+
+        (async () => {
+    
+            const img    = document.getElementById('img');
+            const status = document.getElementById('status');
+
+            await mobilenet.load().then(model => {
+                
+                model.classify(img).then(predictions => {
+
+                    status.innerHTML = `<strong>Object:</strong> ${predictions[0].className} -- ${predictions[0].probability}`;
+                    
+                });
+            });
+
+        })();
+
+</script>
+
+</head>
+<body>
+</body>
+</html>
